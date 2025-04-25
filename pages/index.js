@@ -41,6 +41,7 @@ export default function Home() {
     >
       <Head>
         <title>Linkedificator</title>
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
