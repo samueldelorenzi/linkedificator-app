@@ -1,0 +1,22 @@
+{
+  "name": "linkedificator-app",
+  "version": "1.0.0",
+  "description": "Transforma qualquer história em um post de um founder do LinkedIn",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "samueldelorenzi",
+  "license": "MIT",
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "animate.css": "^4.1.1",
+    "bootstrap": "^5.3.5",
+    "bootstrap-icons": "^1.11.3",
+    "groq-sdk": "^0.20.1",
+    "next": "^15.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
