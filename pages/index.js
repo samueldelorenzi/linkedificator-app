@@ -182,7 +182,11 @@ export default function Home() {
                   </div>
                   <p
                     className="card-text text-muted"
-                    style={{ lineHeight: "1.8" }}
+                    style={{
+                      lineHeight: "1.8",
+                      fontSize: "1.1rem",
+                      whiteSpace: "pre-line",
+                    }}
                   >
                     {data.chat}
                   </p>
