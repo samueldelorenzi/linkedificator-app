@@ -9,14 +9,34 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
     import("bootstrap/dist/js/bootstrap.bundle.min.js");
   }, []);
 
+  useEffect(() => {
+    if (cooldown <= 0) return;
+
+    const timer = setInterval(() => {
+      setCooldown((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
   const handleSubmit = (e) => {
+    if (cooldown > 0) {
+      alert(
+        `Por favor aguarde ${cooldown} segundos antes de criar um novo post.`
+      );
+      return;
+    }
+
     e.preventDefault();
     setLoading(true);
+    setCooldown(20);
+
     fetch("/api/v1/response", {
       method: "POST",
       headers: {
@@ -133,7 +153,7 @@ export default function Home() {
                 <button
                   type="submit"
                   className="btn btn-primary rounded-pill px-4 py-3 ms-2"
-                  disabled={loading}
+                  disabled={loading || cooldown > 0}
                   style={{
                     background: "linear-gradient(45deg, #4F46E5, #9333EA)",
                     border: "none",
@@ -145,6 +165,8 @@ export default function Home() {
                       <span className="spinner-border spinner-border-sm me-2"></span>
                       Carregando...
                     </>
+                  ) : cooldown > 0 ? (
+                    `Aguarde ${cooldown}s`
                   ) : (
                     "Criar post →"
                   )}
