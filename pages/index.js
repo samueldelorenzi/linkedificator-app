@@ -1,11 +1,16 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import Head from "next/head";
+import Navbar from "./components/navbar";
+import Footer from "./components/footer";
+import Error from "./components/error";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "animate.css";
 
 export default function Home() {
   const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -13,9 +18,7 @@ export default function Home() {
 
   useEffect(() => {
     import("bootstrap/dist/js/bootstrap.bundle.min.js");
-  }, []);
 
-  useEffect(() => {
     if (cooldown <= 0) return;
 
     const timer = setInterval(() => {
@@ -26,13 +29,6 @@ export default function Home() {
   }, [cooldown]);
 
   const handleSubmit = (e) => {
-    if (cooldown > 0) {
-      alert(
-        `Por favor aguarde ${cooldown} segundos antes de criar um novo post.`
-      );
-      return;
-    }
-
     e.preventDefault();
     setLoading(true);
     setCooldown(20);
@@ -44,87 +40,37 @@ export default function Home() {
       },
       body: JSON.stringify({ input }),
     })
-      .then((res) => res.json())
+      .then((response) => response.json())
       .then((data) => {
         setData(data);
+        setError(null);
       })
-      .catch((err) => console.error("Erro no fetch:", err))
+      .catch(
+        (error) =>
+          setError("Erro ao gerar seu post. Entre em contato com o suporte."),
+        setCooldown(0),
+        setData(null)
+      )
       .finally(() => setLoading(false));
   };
 
   return (
-    <div
-      className="d-flex flex-column min-vh-100"
-      style={{
-        background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
-      }}
-    >
+    <div className="d-flex flex-column min-vh-100">
       <Head>
         <title>Linkedificator</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
-        <div className="container">
-          <a
-            className="navbar-brand fw-bold text-primary"
-            style={{ fontSize: "1.5rem" }}
-          >
-            Linkedificator
-          </a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
-              <li className="nav-item">
-                <a className="nav-link active fw-bold">Home</a>
-              </li>
-              <li className="nav-item">
-                <a
-                  className="nav-link text-secondary"
-                  href="https://github.com/samueldelorenzi"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  GitHub
-                </a>
-              </li>
-              <li className="nav-item">
-                <a
-                  className="nav-link text-secondary"
-                  href="https://linkedin.com/in/samueldelorenzi"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  LinkedIn
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
-      <main className="container flex-grow-1" style={{ paddingTop: "80px" }}>
+      <main className="container flex-grow-1">
         <div className="text-center mb-5 animate__animated animate__fadeIn">
-          <h1
-            className="display-4 fw-bold mb-3"
-            style={{
-              background: "linear-gradient(45deg, #4F46E5, #9333EA)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
+          <h1 className="display-4 fw-bold mb-3 gradient">
             Transforme qualquer situação em um post inspirador para o LinkedIn!
           </h1>
           <p className="lead text-muted mb-4">
-            Criador de posts inspiradores para o LinkedIn, com um toque de humor
-            e criatividade, apenas escreva sua situação e espere o resultado.
+            Criador de posts inspiradores para o LinkedIn, um site de humor
+            baseado nos textos motivacionais das redes sociais.
           </p>
         </div>
 
@@ -138,7 +84,6 @@ export default function Home() {
                   placeholder="Escreva qualquer situação do dia a dia..."
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  style={{ fontSize: "1.1rem" }}
                   maxLength={200}
                 />
                 <div className="d-flex align-items-center px-3">
@@ -152,13 +97,8 @@ export default function Home() {
                 </div>
                 <button
                   type="submit"
-                  className="btn btn-primary rounded-pill px-4 py-3 ms-2"
+                  className="gradient-button btn btn-primary rounded-pill px-4 py-3 ms-2"
                   disabled={loading || cooldown > 0}
-                  style={{
-                    background: "linear-gradient(45deg, #4F46E5, #9333EA)",
-                    border: "none",
-                    transition: "transform 0.2s",
-                  }}
                 >
                   {loading ? (
                     <>
@@ -175,6 +115,8 @@ export default function Home() {
             </form>
           </div>
         </div>
+
+        {error && <Error message={error} onClose={() => setError(null)} />}
 
         {data && (
           <div className="row justify-content-center animate__animated animate__fadeInUp">
@@ -202,14 +144,7 @@ export default function Home() {
                       {copied ? "Copiado!" : "Copiar"}
                     </button>
                   </div>
-                  <p
-                    className="card-text text-muted"
-                    style={{
-                      lineHeight: "1.8",
-                      fontSize: "1.1rem",
-                      whiteSpace: "pre-line",
-                    }}
-                  >
+                  <p className="card-text text-muted post-formatting">
                     {data.chat}
                   </p>
                 </div>
@@ -218,12 +153,7 @@ export default function Home() {
           </div>
         )}
       </main>
-
-      <footer className="bg-white border-top py-4 mt-5">
-        <div className="container text-center text-muted">
-          <p className="mb-0">© 2025 Samuel De Lorenzi</p>
-        </div>
-      </footer>
+      <Footer></Footer>
     </div>
   );
 }

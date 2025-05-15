@@ -1,0 +1,23 @@
+.gradient {
+  background: linear-gradient(45deg, #5c85ff, #0048ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.gradient-button {
+  background: linear-gradient(45deg, #5c85ff, #0048ff) !important;
+  border: none !important;
+  transition: transform 0.2s;
+}
+
+.post-formatting {
+  line-height: 1.8;
+  font-size: 1.1rem;
+  white-space: pre-line;
+}
+
+.shadow-top {
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+}
