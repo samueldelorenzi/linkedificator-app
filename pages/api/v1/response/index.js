@@ -2,30 +2,33 @@ import Groq from "groq-sdk";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-export default async function main(req, res) {
-  res.setHeader(
+export default async function main(request, response) {
+  response.setHeader(
     "Access-Control-Allow-Origin",
     "https://linkedificator-app.vercel.app"
   );
-  res.setHeader("Access-Control-Allow-Methods", "POST");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  response.setHeader("Access-Control-Allow-Methods", "POST");
+  response.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization"
+  );
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
+  if (request.method === "OPTIONS") {
+    return response.status(200).end();
   }
 
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
+  if (request.method !== "POST") {
+    return response.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const reqBody = req.body;
+  const reqBody = request.body;
   const chatCompletion = await getGroqChatCompletion(reqBody);
-  return res.status(200).json({
+  return response.status(200).json({
     chat: chatCompletion.choices[0].message.content,
   });
 }
 
-export async function getGroqChatCompletion(reqBody) {
+async function getGroqChatCompletion(reqBody) {
   return groq.chat.completions.create({
     messages: [
       {
